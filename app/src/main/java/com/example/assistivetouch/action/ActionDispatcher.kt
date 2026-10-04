@@ -171,36 +171,34 @@ class ActionDispatcher(private val context: Context) {
     }
 
     private fun openWifiPanel() {
-        try {
-            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                Intent(Settings.Panel.ACTION_WIFI)
-            } else {
-                Intent(Settings.ACTION_WIFI_SETTINGS)
+        val intentsToTry = buildList {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                add(Intent(Settings.Panel.ACTION_WIFI))
             }
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(intent)
-        } catch (_: Exception) {
+            add(Intent(Settings.ACTION_WIFI_SETTINGS))
+            add(Intent(Settings.ACTION_SETTINGS))
+        }
+
+        for (intent in intentsToTry) {
             try {
-                val fallbackIntent = Intent(Settings.ACTION_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                context.startActivity(fallbackIntent)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(intent)
+                return
             } catch (_: Exception) {}
         }
     }
 
     private fun openBluetoothSettings() {
-        try {
-            val intent = Intent(Settings.ACTION_BLUETOOTH_SETTINGS).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
-        } catch (_: Exception) {
+        val intentsToTry = listOf(
+            Intent(Settings.ACTION_BLUETOOTH_SETTINGS),
+            Intent(Settings.ACTION_SETTINGS)
+        )
+
+        for (intent in intentsToTry) {
             try {
-                val fallbackIntent = Intent(Settings.ACTION_SETTINGS).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                context.startActivity(fallbackIntent)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(intent)
+                return
             } catch (_: Exception) {}
         }
     }
