@@ -6,7 +6,7 @@ We welcome contributions of all kinds: bug fixes, performance optimizations, acc
 
 ---
 
-## 🛠️ Development Setup
+## ◈ Development Setup
 
 ### Prerequisites
 * **JDK 17** (Amazon Corretto, OpenJDK, or Azul Zulu)
@@ -36,9 +36,9 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 
 ---
 
-## 🎯 Architecture & Design Principles
+## ◈ Architecture & Design Principles
 
-When proposing or making changes, please follow these principles:
+When proposing or making changes, please follow these core principles:
 
 1. **Ultra-Lightweight Footprint (< 3 MB)**:
    * Keep dependencies minimal. Avoid pulling in heavy third-party libraries for trivial tasks.
@@ -58,7 +58,7 @@ When proposing or making changes, please follow these principles:
 
 ---
 
-## 🧪 Testing
+## ◈ Testing
 
 Before submitting a Pull Request, verify that all unit tests pass cleanly:
 
@@ -70,19 +70,19 @@ If adding new menu actions or preferences, please add corresponding unit tests i
 
 ---
 
-## 🎯 Current Call for Contributors: Universal Screen Recording
+## ◈ Call for Contributors: Universal Screen Recording
 
 We are actively seeking contributions to implement a **universal, device-agnostic screen recording engine**:
-- **Goal**: Seamless screen capture across all Android devices (Samsung OneUI, Xiaomi MIUI, Google Pixel, OnePlus OxygenOS, etc.) without OEM-specific crashes or restrictions.
-- **Key Areas**:
-  - `MediaProjection` permissions flow and foreground service orchestration.
-  - Video and internal audio encoding (`MediaRecorder` or `MediaCodec`).
-  - Dynamic floating recording indicator and one-tap stop controls from the overlay.
-- Feel free to open an issue or submit a pull request if you'd like to take the lead or collaborate on this feature!
+* **Goal**: Seamless screen capture across all Android devices (Samsung OneUI, Xiaomi MIUI, Google Pixel, OnePlus OxygenOS, etc.) without OEM-specific crashes or restrictions.
+* **Key Areas**:
+  * `MediaProjection` permissions flow and foreground service orchestration.
+  * Video and internal audio encoding (`MediaRecorder` or `MediaCodec`).
+  * Dynamic floating recording indicator and one-tap stop controls from the overlay.
+* Feel free to open an issue or submit a pull request if you'd like to take the lead or collaborate on this feature!
 
 ---
 
-## 📋 Pull Request Process
+## ◈ Pull Request Process
 
 1. Fork the repository and create your feature branch from `main`:
    ```bash
@@ -95,7 +95,6 @@ We are actively seeking contributions to implement a **universal, device-agnosti
 
 ---
 
-## 📄 License
+## ◈ License
 
 By contributing to TouchCore, you agree that your contributions will be licensed under the [Apache License, Version 2.0](LICENSE).
-

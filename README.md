@@ -4,79 +4,108 @@
 
 **Ultra-lightweight, brutalist floating assistive touch overlay and navigation hub for Android.**
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-purple.svg)](https://kotlinlang.org/)
-[![Min SDK](https://img.shields.io/badge/Min_SDK-29-brightgreen.svg)](https://developer.android.com/about/versions/10)
-[![Target SDK](https://img.shields.io/badge/Target_SDK-35-orange.svg)](https://developer.android.com/about/versions/15)
-[![APK Size](https://img.shields.io/badge/APK_Size-2.5_MB-success.svg)](app/build/outputs/apk/release/)
-[![Trackers](https://img.shields.io/badge/Trackers-0-brightgreen.svg)](#privacy--security)
+[![License](https://img.shields.io/badge/License-Apache_2.0-000000.svg?style=flat-square&logo=apache&logoColor=white)](LICENSE)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-000000.svg?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Platform](https://img.shields.io/badge/Platform-Android_10+-000000.svg?style=flat-square&logo=android&logoColor=white)](https://developer.android.com/about/versions/10)
+[![Target SDK](https://img.shields.io/badge/Target_SDK-35-000000.svg?style=flat-square&logo=android&logoColor=white)](https://developer.android.com/about/versions/15)
+[![APK Size](https://img.shields.io/badge/Release_APK-2.5_MB-000000.svg?style=flat-square&logo=speedtest&logoColor=white)](app/build/outputs/apk/release/)
+[![Ads & Trackers](https://img.shields.io/badge/Ads_&_Trackers-None-000000.svg?style=flat-square&logo=adguard&logoColor=white)](#permissions--security)
+[![Network](https://img.shields.io/badge/Network-100%25_Offline-000000.svg?style=flat-square)](#permissions--security)
 
 </div>
 
 ---
 
-## 💡 About TouchCore
+## ◈ Interface Showcase
 
-**TouchCore** is a free, open-source alternative to Apple's AssistiveTouch and bulky third-party Android overlay apps. Built from scratch with Kotlin and clean architecture, TouchCore pairs a concentric circular floating bubble with a minimalist, high-contrast, brutalist interface.
-
-Unlike generic overlay apps that bloat your device with advertisements, tracking SDKs, and 50MB+ download sizes, TouchCore weighs in at just **2.5 MB**, operates **100% offline**, and requests only the minimal permissions required to function.
-
----
-
-## ✨ Features
-
-* **Authentic Concentric Floating Core**:
-  * Precision-crafted concentric circular floating button.
-  * Natural dragging physics with smooth edge snapping and boundary detection.
-  * Idle auto-dimming to 40% opacity to prevent screen distraction and save battery.
-  * Customizable button size (40–80 dp) and active/idle opacity levels.
-
-* **Global System Navigation**:
-  * Instant access to **Home**, **Back**, **App Switcher (Recents)**, **Lock Screen**, **Screenshot**, and **Notification Shade** via Android's Accessibility framework.
-
-* **Interactive Hardware Controls**:
-  * Direct touchscreen **Volume Slider** with instant audio feedback.
-  * Direct **Brightness Slider** (with fine-grained adjustment).
-  * One-tap **Torch (Flashlight)** toggle using camera flash hardware.
-  * Fast toggles for **Wi-Fi** and **Bluetooth** settings.
-  * Screen orientation lock and native **Screen Recording** via MediaProjection.
-
-* **Pinned App Favorites**:
-  * Pin your most frequently used apps directly to the radial menu for instant launching from anywhere.
-
-* **Zero-Radius Brutalist Design**:
-  * Sharp `0dp` border radii on all cards, buttons, dialogs, and panels.
-  * Deep OLED obsidian black (`#101216`) background with high-contrast monochrome accents.
-  * Clean, unified iconography using lightweight Lucide stroke vectors.
-
-* **Ultra-Lightweight & Private**:
-  * **2.5 MB** release binary size with R8 code optimization and resource shrinking.
-  * **Zero Analytics, Zero Ads, Zero Telemetry**.
-  * **Zero Internet Permission** (`android.permission.INTERNET` is not requested).
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="25%">
+        <img src="docs/screenshots/dashboard.png" alt="TouchCore Dashboard" width="220"/><br/>
+        <b>Dashboard</b><br/>
+        <sub>Brutalist control center & sliders</sub>
+      </td>
+      <td align="center" width="25%">
+        <img src="docs/screenshots/radial_menu.png" alt="Radial Action Menu" width="220"/><br/>
+        <b>Radial Menu</b><br/>
+        <sub>8-slot quick navigation overlay</sub>
+      </td>
+      <td align="center" width="25%">
+        <img src="docs/screenshots/hardware_controls.png" alt="Hardware Controls" width="220"/><br/>
+        <b>Hardware Controls</b><br/>
+        <sub>Interactive volume & brightness cards</sub>
+      </td>
+      <td align="center" width="25%">
+        <img src="docs/screenshots/appearance_settings.png" alt="Appearance Settings" width="220"/><br/>
+        <b>Preferences</b><br/>
+        <sub>Live concentric preview & 0dp theme</sub>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ---
 
-## 📸 Overview
+## ◈ About TouchCore
 
-| Dashboard & Controls | Radial Action Menu | Hardware Sliders |
-| :---: | :---: | :---: |
-| High-contrast brutalist dashboard with service activation & sliders | Central circular menu for instant navigation & actions | Direct on-screen volume & brightness adjustments |
+**TouchCore** is a free, open-source alternative to Apple's AssistiveTouch and bulky third-party Android overlay utilities. Built from scratch with Kotlin and clean architecture, TouchCore pairs a concentric circular floating bubble with a minimalist, high-contrast, brutalist interface.
+
+Unlike generic overlay apps that bloat your device with advertisements, aggressive tracking SDKs, and 50MB+ download sizes, TouchCore weighs in at just **2.5 MB**, operates **100% offline**, and requests only the minimal permissions required to function.
+
+* **Zero Ads** - No banners, no interstitials, no rewarded ads, ever.
+* **Zero Telemetry** - No analytics, crash reporters, or background trackers.
+* **Zero Internet Access** - `android.permission.INTERNET` is not even present in the manifest.
 
 ---
 
-## 🔒 Permissions & Security
+## ◈ Features
 
-TouchCore is designed around the principle of minimal privilege:
+### ◆ Authentic Concentric Floating Core
+* **Concentric Circular Geometry**: Distinctive multi-ring floating trigger designed for tactile feedback.
+* **Natural Dragging Physics**: Smooth edge snapping with smart boundary and status-bar avoidance.
+* **Idle Auto-Dimming**: Automatically fades to configurable idle opacity (default 40%) when inactive to eliminate distraction.
+* **Custom Sizing & Alpha**: Tailor core diameter (40–80 dp) and active/idle opacity levels directly from settings.
 
-| Permission | Purpose |
-| :--- | :--- |
-| `SYSTEM_ALERT_WINDOW` | Required to draw the floating touch core over other applications. |
-| `BIND_ACCESSIBILITY_SERVICE` | Required to execute system navigation actions (Home, Back, Recents, Lock Screen, Screenshot). Service is unexported and runs strictly locally. |
-| `WRITE_SETTINGS` | *(Optional)* Required only for adjusting screen brightness directly from the slider. |
-| `CAMERA` | *(Optional)* Required only to toggle the camera flash as a flashlight/torch. |
-| `FOREGROUND_SERVICE` | Keeps the overlay service alive and responsive in the background. |
-| `FOREGROUND_SERVICE_MEDIA_PROJECTION` | Enables screen recording via Android's native MediaProjection API. |
-| `POST_NOTIFICATIONS` | Displays the persistent foreground service notification in the drawer. |
+### ◆ Global System Navigation
+* **Accessibility Hub**: Instant triggers for **Home**, **Back**, **Recents (Overview)**, **Lock Screen**, **Screenshot**, and **Notification Shade**.
+* **Zero Lag Dispatch**: Dispatched directly through Android's Accessibility Service framework without unnecessary indirection.
+
+### ◆ Interactive Hardware Controls
+* **Direct Volume Card**: Live volume slider with instant audio stream adjustments.
+* **Direct Brightness Card**: Live brightness slider with fine-grained adjustment.
+* **Flashlight / Torch**: Instant toggle using camera flash hardware.
+* **Network & Radio Shortcuts**: Quick jump cards for Wi-Fi and Bluetooth system panels.
+* **Orientation & Screen Lock**: Fast orientation lock and display sleep toggles.
+
+### ◆ Pinned App Favorites
+* **Fast App Launching**: Pin frequently used apps to the radial menu slots for instant launching over any foreground application.
+
+### ◆ Zero-Radius Brutalist Design
+* **Brutalist 0dp Radius**: Completely unrounded, sharp border radii on cards, buttons, dialogs, and control sheets.
+* **Obsidian OLED Palette**: Deep black (`#101216`) backgrounds, high-contrast white typography, and functional accent highlights.
+* **Lucide Iconography**: Unified, clean vector stroke icons for every action and tool.
+
+### ◆ Ultra-Lightweight Footprint
+* **2.5 MB Total APK**: Aggressive R8 bytecode optimization and unused resource stripping.
+* **Memory Efficient**: Negligible RAM consumption with immediate bitmap recycling and hardware acceleration.
+
+---
+
+## ◈ Permissions & Security
+
+TouchCore follows the principle of least privilege:
+
+| Permission | Status | Purpose |
+| :--- | :---: | :--- |
+| `SYSTEM_ALERT_WINDOW` | Required | Render the floating touch core and overlay panels above other apps. |
+| `BIND_ACCESSIBILITY_SERVICE` | Required | Execute navigation actions (Home, Back, Recents, Lock, Screenshot). Strictly local and unexported. |
+| `WRITE_SETTINGS` | Optional | Adjust system screen brightness directly from the touch slider. |
+| `CAMERA` | Optional | Toggle camera LED hardware as a torch / flashlight. |
+| `FOREGROUND_SERVICE` | Required | Keep the overlay service alive and responsive in the background. |
+| `FOREGROUND_SERVICE_MEDIA_PROJECTION` | Optional | Screen recording engine via native MediaProjection APIs. |
+| `POST_NOTIFICATIONS` | Required | Display the persistent foreground notification required by modern Android versions. |
+| `INTERNET` | **NOT REQUESTED** | **Zero network permissions.** The app cannot make or receive network calls. |
 
 > **Note on Android 13+ Restricted Settings**:
 > When sideloading on Android 13 or later, Android may initially restrict accessibility permissions for sideloaded APKs. To enable:
@@ -84,9 +113,9 @@ TouchCore is designed around the principle of minimal privilege:
 
 ---
 
-## 🏗️ Architecture
+## ◈ Architecture
 
-TouchCore follows clean architecture and separation of concerns:
+TouchCore is architected around clean architecture, decoupled responsibilities, and testability:
 
 ```text
 app/src/main/java/com/example/assistivetouch/
@@ -118,7 +147,7 @@ app/src/main/java/com/example/assistivetouch/
 
 ---
 
-## 🚀 Building from Source
+## ◈ Building from Source
 
 ### Prerequisites
 * **JDK 17**
@@ -149,16 +178,15 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 
 ---
 
-## 🤝 Contributing & Help Wanted
+## ◈ Contributing & Help Wanted
 
-Contributions are warmly welcome! Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, architectural guidelines, and pull request steps.
+Contributions are warmly welcome. Please review [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, architectural guidelines, and pull request steps.
 
-### 🎥 Help Wanted: Universal Screen Recording Engine
-We are looking for contributors to help build and optimize a **rock-solid screen recording feature** that works reliably across all Android devices and OEM skins without restrictions. If you have experience with Android `MediaProjection`, hardware video encoding, or foreground capture services, come join the project and help make TouchCore even better!
+### ▸ Help Wanted: Universal Screen Recording Engine
+We are actively seeking contributors to help build and optimize a **rock-solid screen recording feature** that works reliably across all Android devices and OEM skins without restrictions. If you have experience with Android `MediaProjection`, hardware video encoding (`MediaCodec` / `MediaRecorder`), or foreground capture services, come join the project and help make TouchCore even better!
 
 ---
 
-## 📄 License
+## ◈ License
 
 TouchCore is open-source software licensed under the [Apache License, Version 2.0](LICENSE).
-
