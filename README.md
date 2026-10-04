@@ -149,12 +149,16 @@ adb install -r app/build/outputs/apk/release/app-release.apk
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contributing & Help Wanted
 
-Contributions are welcome! Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines, coding conventions, and pull request procedures.
+Contributions are warmly welcome! Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, architectural guidelines, and pull request steps.
+
+### 🎥 Help Wanted: Universal Screen Recording Engine
+We are looking for contributors to help build and optimize a **rock-solid screen recording feature** that works reliably across all Android devices and OEM skins without restrictions. If you have experience with Android `MediaProjection`, hardware video encoding, or foreground capture services, come join the project and help make TouchCore even better!
 
 ---
 
 ## 📄 License
 
 TouchCore is open-source software licensed under the [Apache License, Version 2.0](LICENSE).
+

@@ -70,6 +70,18 @@ If adding new menu actions or preferences, please add corresponding unit tests i
 
 ---
 
+## 🎯 Current Call for Contributors: Universal Screen Recording
+
+We are actively seeking contributions to implement a **universal, device-agnostic screen recording engine**:
+- **Goal**: Seamless screen capture across all Android devices (Samsung OneUI, Xiaomi MIUI, Google Pixel, OnePlus OxygenOS, etc.) without OEM-specific crashes or restrictions.
+- **Key Areas**:
+  - `MediaProjection` permissions flow and foreground service orchestration.
+  - Video and internal audio encoding (`MediaRecorder` or `MediaCodec`).
+  - Dynamic floating recording indicator and one-tap stop controls from the overlay.
+- Feel free to open an issue or submit a pull request if you'd like to take the lead or collaborate on this feature!
+
+---
+
 ## 📋 Pull Request Process
 
 1. Fork the repository and create your feature branch from `main`:
@@ -77,12 +89,13 @@ If adding new menu actions or preferences, please add corresponding unit tests i
    git checkout -b feature/your-feature-name
    ```
 2. Commit your changes with clear, descriptive commit messages.
-3. Test your changes on a physical device or emulator.
+3. Test your changes on a physical device or emulator (`./gradlew test`).
 4. Push to your fork and submit a Pull Request against the `main` branch.
-5. Provide a clear description and, if UI changes were made, attach before/after screenshots.
+5. Provide a clear description and attach screenshots or screen recordings where applicable.
 
 ---
 
 ## 📄 License
 
 By contributing to TouchCore, you agree that your contributions will be licensed under the [Apache License, Version 2.0](LICENSE).
+
