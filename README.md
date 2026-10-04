@@ -27,9 +27,9 @@
         <sub>Brutalist control center & sliders</sub>
       </td>
       <td align="center" width="25%">
-        <img src="docs/screenshots/radial_menu.png" alt="Radial Action Menu" width="220"/><br/>
-        <b>Radial Menu</b><br/>
-        <sub>8-slot quick navigation overlay</sub>
+        <img src="docs/screenshots/radial_menu.png" alt="TouchCore Action Modal" width="220"/><br/>
+        <b>Action Modal</b><br/>
+        <sub>Brutalist 8-action navigation hub</sub>
       </td>
       <td align="center" width="25%">
         <img src="docs/screenshots/hardware_controls.png" alt="Hardware Controls" width="220"/><br/>
@@ -79,7 +79,7 @@ Unlike generic overlay apps that bloat your device with advertisements, aggressi
 * **Orientation & Screen Lock**: Fast orientation lock and display sleep toggles.
 
 ### ◆ Pinned App Favorites
-* **Fast App Launching**: Pin frequently used apps to the radial menu slots for instant launching over any foreground application.
+* **Fast App Launching**: Pin frequently used apps to the action menu slots for instant launching over any foreground application.
 
 ### ◆ Zero-Radius Brutalist Design
 * **Brutalist 0dp Radius**: Completely unrounded, sharp border radii on cards, buttons, dialogs, and control sheets.
