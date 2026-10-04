@@ -1,32 +1,29 @@
 package com.example.assistivetouch.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.assistivetouch.R
+import com.example.assistivetouch.ui.view.CapsuleSliderView
+import com.example.assistivetouch.ui.view.PillSegmentedGroup
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.slider.Slider
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var toolbar: MaterialToolbar
-    private lateinit var sizeSlider: Slider
-    private lateinit var alphaSlider: Slider
-    private lateinit var colorGroup: RadioGroup
-    private lateinit var themeGroup: RadioGroup
-    private lateinit var longPressGroup: RadioGroup
-    private lateinit var applyButton: Button
-    private lateinit var textSizeValue: TextView
-    private lateinit var textAlphaValue: TextView
-    private lateinit var previewButton: MaterialCardView
+    private lateinit var sizeSlider: CapsuleSliderView
+    private lateinit var alphaSlider: CapsuleSliderView
+    private lateinit var longPressGroup: PillSegmentedGroup
+    private lateinit var colorGroup: PillSegmentedGroup
+    private lateinit var applyButton: View
+    private lateinit var previewButton: View
+
+    private var currentSizeDp = 56
+    private var currentAlphaPercent = 100
+    private var currentColor = COLOR_BLUE
+    private var currentLongPress = ACTION_OPEN_SETTINGS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,149 +36,113 @@ class SettingsActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_out_left, R.anim.fade_in)
         }
 
-        sizeSlider = findViewById(R.id.seekSize)
-        alphaSlider = findViewById(R.id.seekAlpha)
-        colorGroup = findViewById(R.id.groupColor)
-        themeGroup = findViewById(R.id.groupTheme)
-        longPressGroup = findViewById(R.id.groupLongPress)
+        sizeSlider = findViewById(R.id.capsuleSeekSize)
+        alphaSlider = findViewById(R.id.capsuleSeekAlpha)
+        longPressGroup = findViewById(R.id.pillGroupLongPress)
+        colorGroup = findViewById(R.id.pillGroupColor)
         applyButton = findViewById(R.id.buttonApplySettings)
-        textSizeValue = findViewById(R.id.textSizeValue)
-        textAlphaValue = findViewById(R.id.textAlphaValue)
         previewButton = findViewById(R.id.previewButton)
 
+        setupSegmentedGroups()
         loadPrefs()
+        setupSliders()
         updatePreview()
-
-        sizeSlider.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) {
-                val sizeDp = value.toInt() + 40
-                textSizeValue.text = "${sizeDp}dp"
-                updatePreview()
-            }
-        }
-        sizeSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: Slider) {}
-            override fun onStopTrackingTouch(slider: Slider) {
-                slider.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-            }
-        })
-
-        alphaSlider.addOnChangeListener { _, value, fromUser ->
-            if (fromUser) {
-                val alpha = value.toInt()
-                textAlphaValue.text = "$alpha%"
-                updatePreview()
-            }
-        }
-        alphaSlider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: Slider) {}
-            override fun onStopTrackingTouch(slider: Slider) {
-                slider.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-            }
-        })
-
-        colorGroup.setOnCheckedChangeListener { _, _ -> updatePreview() }
-        themeGroup.setOnCheckedChangeListener { _, _ -> updatePreview() }
 
         applyButton.setOnClickListener {
             it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             savePrefs()
-            // Notify service to refresh
-            sendBroadcast(android.content.Intent(ACTION_SETTINGS_CHANGED))
+            sendBroadcast(Intent(ACTION_SETTINGS_CHANGED))
             finish()
             overridePendingTransition(R.anim.slide_out_left, R.anim.fade_in)
         }
     }
 
+    private fun setupSegmentedGroups() {
+        longPressGroup.setSegments(
+            listOf(
+                PillSegmentedGroup.Segment(ACTION_OPEN_SETTINGS, "Settings"),
+                PillSegmentedGroup.Segment(ACTION_LOCK_SCREEN, "Lock Screen"),
+                PillSegmentedGroup.Segment(ACTION_SCREENSHOT, "Capture")
+            )
+        )
+        longPressGroup.onSegmentSelected = { _, id ->
+            currentLongPress = id
+        }
+
+        colorGroup.setSegments(
+            listOf(
+                PillSegmentedGroup.Segment(COLOR_BLUE, "Monochrome"),
+                PillSegmentedGroup.Segment(COLOR_RED, "Crimson"),
+                PillSegmentedGroup.Segment(COLOR_GREEN, "Emerald")
+            )
+        )
+        colorGroup.onSegmentSelected = { _, id ->
+            currentColor = id
+            updatePreview()
+        }
+    }
+
+    private fun setupSliders() {
+        sizeSlider.apply {
+            minValue = 40
+            maxValue = 88
+            stepSize = 2
+            showPercentage = false
+            customFormat = { "${it}dp" }
+            setIconResource(R.drawable.ic_lucide_sliders)
+            setValue(currentSizeDp)
+
+            onValueChanged = { value, _ ->
+                currentSizeDp = value
+                updatePreview()
+            }
+        }
+
+        alphaSlider.apply {
+            minValue = 30
+            maxValue = 100
+            stepSize = 5
+            showPercentage = true
+            setIconResource(R.drawable.ic_lucide_sun)
+            setValue(currentAlphaPercent)
+
+            onValueChanged = { value, _ ->
+                currentAlphaPercent = value
+                updatePreview()
+            }
+        }
+    }
+
     private fun loadPrefs() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        val size = prefs.getInt(KEY_BUTTON_SIZE_DP, 56).coerceIn(40, 96)
-        val alpha = prefs.getInt(KEY_BUTTON_ALPHA, 100).coerceIn(30, 100)
-        val color = prefs.getString(KEY_BUTTON_COLOR, COLOR_BLUE) ?: COLOR_BLUE
-        val theme = prefs.getString(KEY_PANEL_THEME, THEME_LIGHT) ?: THEME_LIGHT
-        val longPress = prefs.getString(KEY_LONG_PRESS_ACTION, ACTION_OPEN_SETTINGS) ?: ACTION_OPEN_SETTINGS
+        currentSizeDp = prefs.getInt(KEY_BUTTON_SIZE_DP, 56).coerceIn(40, 88)
+        currentAlphaPercent = prefs.getInt(KEY_BUTTON_ALPHA, 100).coerceIn(30, 100)
+        currentColor = prefs.getString(KEY_BUTTON_COLOR, COLOR_BLUE) ?: COLOR_BLUE
+        currentLongPress = prefs.getString(KEY_LONG_PRESS_ACTION, ACTION_OPEN_SETTINGS) ?: ACTION_OPEN_SETTINGS
 
-        // Map size (40-96dp) to slider value (0-56)
-        sizeSlider.value = (size - 40).toFloat()
-        alphaSlider.value = alpha.toFloat()
-        
-        // Update value labels
-        textSizeValue.text = "${size}dp"
-        textAlphaValue.text = "$alpha%"
-
-        colorGroup.check(
-            when (color) {
-                COLOR_RED -> R.id.radioColorRed
-                COLOR_GREEN -> R.id.radioColorGreen
-                else -> R.id.radioColorBlue
-            }
-        )
-
-        themeGroup.check(
-            when (theme) {
-                THEME_DARK -> R.id.radioThemeDark
-                else -> R.id.radioThemeLight
-            }
-        )
-
-        longPressGroup.check(
-            when (longPress) {
-                ACTION_LOCK_SCREEN -> R.id.radioLongPressLock
-                ACTION_SCREENSHOT -> R.id.radioLongPressScreenshot
-                else -> R.id.radioLongPressSettings
-            }
-        )
+        longPressGroup.selectSegmentById(currentLongPress, notify = false)
+        colorGroup.selectSegmentById(currentColor, notify = false)
     }
 
     private fun savePrefs() {
         val prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
-        val editor = prefs.edit()
-        // Map slider value (0-56) to size (40-96dp)
-        editor.putInt(KEY_BUTTON_SIZE_DP, sizeSlider.value.toInt() + 40)
-        editor.putInt(KEY_BUTTON_ALPHA, alphaSlider.value.toInt())
-
-        val color = when (colorGroup.checkedRadioButtonId) {
-            R.id.radioColorRed -> COLOR_RED
-            R.id.radioColorGreen -> COLOR_GREEN
-            else -> COLOR_BLUE
-        }
-        editor.putString(KEY_BUTTON_COLOR, color)
-
-        val theme = when (themeGroup.checkedRadioButtonId) {
-            R.id.radioThemeDark -> THEME_DARK
-            else -> THEME_LIGHT
-        }
-        editor.putString(KEY_PANEL_THEME, theme)
-
-        val longPress = when (longPressGroup.checkedRadioButtonId) {
-            R.id.radioLongPressLock -> ACTION_LOCK_SCREEN
-            R.id.radioLongPressScreenshot -> ACTION_SCREENSHOT
-            else -> ACTION_OPEN_SETTINGS
-        }
-        editor.putString(KEY_LONG_PRESS_ACTION, longPress)
-
-        editor.apply()
+        prefs.edit()
+            .putInt(KEY_BUTTON_SIZE_DP, currentSizeDp)
+            .putInt(KEY_BUTTON_ALPHA, currentAlphaPercent)
+            .putString(KEY_BUTTON_COLOR, currentColor)
+            .putString(KEY_LONG_PRESS_ACTION, currentLongPress)
+            .apply()
     }
 
     private fun updatePreview() {
-        val sizeDp = sizeSlider.value.toInt() + 40
-        val alphaPercent = alphaSlider.value.toInt()
         val density = resources.displayMetrics.density
-        val sizePx = (sizeDp * density).toInt()
+        val sizePx = (currentSizeDp * density).toInt()
 
         previewButton.layoutParams = previewButton.layoutParams.apply {
             width = sizePx
             height = sizePx
         }
-        previewButton.alpha = (alphaPercent.coerceIn(30, 100) / 100f)
-
-        val color = when (colorGroup.checkedRadioButtonId) {
-            R.id.radioColorRed -> ContextCompat.getColor(this, R.color.floating_button_red)
-            R.id.radioColorGreen -> ContextCompat.getColor(this, R.color.floating_button_green)
-            else -> ContextCompat.getColor(this, R.color.floating_button_blue)
-        }
-        previewButton.setCardBackgroundColor(color)
-
+        previewButton.alpha = (currentAlphaPercent.coerceIn(30, 100) / 100f)
         previewButton.requestLayout()
     }
 
@@ -207,5 +168,3 @@ class SettingsActivity : AppCompatActivity() {
         const val ACTION_SETTINGS_CHANGED = "com.example.assistivetouch.ACTION_SETTINGS_CHANGED"
     }
 }
-
-

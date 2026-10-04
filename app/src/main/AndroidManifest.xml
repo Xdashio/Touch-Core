@@ -3,10 +3,14 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
 
     <queries>
         <intent>
@@ -19,7 +23,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AssistiveTouch">
 
@@ -35,15 +39,15 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.SettingsActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.FavoritesActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".ui.ScreenRecordPermissionActivity"
@@ -53,7 +57,12 @@
 
         <service
             android:name=".service.FloatingButtonService"
-            android:exported="false" />
+            android:exported="true"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="TouchCore accessibility floating menu" />
+        </service>
 
         <service
             android:name=".service.ScreenRecordingService"

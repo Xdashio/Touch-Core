@@ -3,42 +3,81 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/background">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="Search apps"
-        app:startIconDrawable="@android:drawable/ic_menu_search"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        app:title="Favorite Shortcuts"
+        app:titleTextColor="@color/white"
+        app:navigationIcon="@drawable/ic_lucide_arrow_left"
+        app:navigationIconTint="@color/white" />
+
+    <!-- Search Capsule (24dp squircle pill) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_squircle_card"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/ic_lucide_star"
+            android:tint="#8E8E93" />
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editSearch"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="Search installed apps..."
+            android:textColor="@color/white"
+            android:textColorHint="#8E8E93"
+            android:textSize="14sp"
+            android:paddingHorizontal="12dp"
             android:inputType="text"
             android:imeOptions="actionSearch" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerApps"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="12dp"
         android:clipToPadding="false" />
 
-    <com.google.android.material.button.MaterialButton
+    <!-- Pure White Pill Save Button -->
+    <FrameLayout
         android:id="@+id/buttonSaveFavorites"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Save favorites"
-        style="@style/Widget.Material3.Button"
-        app:cornerRadius="12dp" />
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_pill_button_white"
+        android:elevation="4dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Save Favorites"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium" />
+    </FrameLayout>
 
 </LinearLayout>
-
-

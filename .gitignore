@@ -3,6 +3,15 @@
 build/
 **/build/
 
+# Local configuration
+local.properties
+
+# Android Keystores & Binaries
+*.jks
+*.keystore
+*.apk
+*.aab
+
 # IDE files
 .idea/
 *.iml
@@ -10,7 +19,7 @@ build/
 .classpath
 .settings/
 
-# Android Studio
+# Android Studio & OS
 .DS_Store
 captures/
 .externalNativeBuild/
@@ -19,8 +28,6 @@ captures/
 # Logs
 *.log
 
-# Generated
+# Generated outputs
 app/release/
 app/debug/
-
-

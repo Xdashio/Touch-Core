@@ -12,7 +12,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
-@RunWith(MockitoJUnitRunner::class)
+@RunWith(MockitoJUnitRunner.Silent::class)
 class FavoritesManagerTest {
 
     @Mock
@@ -26,7 +26,7 @@ class FavoritesManagerTest {
 
     @Before
     fun setUp() {
-        `when`(context.getSharedPreferences("assistive_touch_prefs", Context.MODE_PRIVATE))
+        `when`(context.getSharedPreferences(anyString(), anyInt()))
             .thenReturn(sharedPreferences)
         `when`(sharedPreferences.edit()).thenReturn(editor)
         `when`(editor.putStringSet(anyString(), any())).thenReturn(editor)
@@ -34,7 +34,7 @@ class FavoritesManagerTest {
 
     @Test
     fun testGetFavoritePackages_whenEmpty_returnsEmptySet() {
-        `when`(sharedPreferences.getStringSet("favorite_apps", any())).thenReturn(emptySet())
+        `when`(sharedPreferences.getStringSet(eq("favorite_apps"), any())).thenReturn(emptySet())
 
         val result = FavoritesManager.getFavoritePackages(context)
 
@@ -44,7 +44,7 @@ class FavoritesManagerTest {
     @Test
     fun testGetFavoritePackages_whenHasPackages_returnsSet() {
         val packages = setOf("com.example.app1", "com.example.app2")
-        `when`(sharedPreferences.getStringSet("favorite_apps", any())).thenReturn(packages)
+        `when`(sharedPreferences.getStringSet(eq("favorite_apps"), any())).thenReturn(packages)
 
         val result = FavoritesManager.getFavoritePackages(context)
 

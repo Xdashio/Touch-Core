@@ -14,13 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assistivetouch.R
 import com.example.assistivetouch.prefs.FavoritesManager
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 
 class FavoritesActivity : AppCompatActivity() {
 
+    private lateinit var toolbar: MaterialToolbar
     private lateinit var recyclerView: RecyclerView
-    private lateinit var buttonSave: MaterialButton
+    private lateinit var buttonSave: View
     private lateinit var editSearch: TextInputEditText
 
     private val allApps = mutableListOf<ResolveInfo>()
@@ -30,6 +31,12 @@ class FavoritesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_favorites)
+
+        toolbar = findViewById(R.id.toolbar)
+        toolbar.setNavigationOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.slide_out_left, R.anim.fade_in)
+        }
 
         recyclerView = findViewById(R.id.recyclerApps)
         buttonSave = findViewById(R.id.buttonSaveFavorites)

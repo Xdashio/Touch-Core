@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Material 3 base theme with dynamic colors support -->
-    <style name="Theme.AssistiveTouch" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Luxury Dark Monochrome Theme: No Generic Grey, No Purple -->
+    <style name="Theme.AssistiveTouch" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary colors -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/on_primary</item>
@@ -32,31 +32,41 @@
         <item name="colorSurfaceVariant">@color/surface_variant</item>
         <item name="colorOnSurfaceVariant">@color/on_surface_variant</item>
         
-        <!-- Background -->
+        <!-- Deep OLED Background -->
         <item name="android:colorBackground">@color/background</item>
         <item name="colorOnBackground">@color/on_background</item>
         
-        <!-- Outline -->
+        <!-- Glass Outline -->
         <item name="colorOutline">@color/outline</item>
         <item name="colorOutlineVariant">@color/outline_variant</item>
         
-        <!-- System UI -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <!-- System UI: Dark status and navigation bars with white icons -->
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
         
-        <!-- Material 3 specific -->
+        <!-- Card Style -->
         <item name="materialCardViewStyle">@style/CardView.Material3</item>
     </style>
 
-    <!-- Material 3 CardView style -->
-    <style name="CardView.Material3" parent="Widget.Material3.CardView.Elevated">
-        <item name="cardElevation">2dp</item>
-        <item name="cardCornerRadius">16dp</item>
+    <!-- Obsidian Frosted Glass Card Style (0dp Absolute Sharp Radius) -->
+    <style name="CardView.Material3" parent="Widget.Material3.CardView.Filled">
+        <item name="cardElevation">0dp</item>
+        <item name="cardCornerRadius">0dp</item>
         <item name="cardBackgroundColor">@color/surface</item>
+        <item name="strokeColor">@color/outline</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- Mini action button inside modal controls -->
+    <style name="AssistiveMiniActionItem">
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">@drawable/ripple_apple_item</item>
     </style>
 
 </resources>
-
-

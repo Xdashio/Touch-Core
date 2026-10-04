@@ -2,18 +2,29 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="32"
-    android:viewportHeight="32">
+    android:viewportWidth="108"
+    android:viewportHeight="108">
 
-    <!-- Centered bubble from app_launcher+bubble.svg, scaled with margin -->
-    <group
-        android:scaleX="0.8"
-        android:scaleY="0.8"
-        android:translateX="3.2"
-        android:translateY="3.2">
-        <path
-            android:fillColor="#FFFFFFFF"
-            android:pathData="M16 0c8.8366 0 16 7.1634 16 16s-7.1634 16-16 16S0 24.8366 0 16 7.1634 0 16 0zm0 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 8c3.3137 0 6 2.6863 6 6s-2.6863 6-6 6-6-2.6863-6-6 2.6863-6 6-6zm0 2c-2.2091 0-4 1.7909-4 4s1.7909 4 4 4 4-1.7909 4-4-1.7909-4-4-4z"/>
-    </group>
+    <!-- Authentic Apple AssistiveTouch Concentric Ring Icon, Centered at (54, 54) -->
+    <!-- Safe zone is 66dp diameter (radius 33). Outer circle radius is 26dp. -->
+
+    <!-- 1. Outer Dark Frosted Glass Disc -->
+    <path
+        android:fillColor="#22252F"
+        android:strokeColor="#33FFFFFF"
+        android:strokeWidth="1.2"
+        android:pathData="M 54,54 m -26,0 a 26,26 0 1,1 52,0 a 26,26 0 1,1 -52,0 Z" />
+
+    <!-- 2. Middle Concentric White Ring -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#B3FFFFFF"
+        android:strokeWidth="2.4"
+        android:pathData="M 54,54 m -16.5,0 a 16.5,16.5 0 1,1 33,0 a 16.5,16.5 0 1,1 -33,0 Z" />
+
+    <!-- 3. Inner Solid Pure White Core Circle -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M 54,54 m -8.5,0 a 8.5,8.5 0 1,1 17,0 a 8.5,8.5 0 1,1 -17,0 Z" />
+
 </vector>
-

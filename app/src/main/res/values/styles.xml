@@ -5,7 +5,7 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:layout_marginHorizontal">20dp</item>
         <item name="cardElevation">6dp</item>
-        <item name="cardCornerRadius">12dp</item>
+        <item name="cardCornerRadius">0dp</item>
         <item name="cardBackgroundColor">@color/surface</item>
         <item name="android:foreground">@drawable/ripple_card</item>
         <item name="android:clickable">true</item>
@@ -28,7 +28,7 @@
         <item name="android:layout_marginTop">16dp</item>
         <item name="android:layout_marginBottom">8dp</item>
         <item name="cardElevation">4dp</item>
-        <item name="cardCornerRadius">12dp</item>
+        <item name="cardCornerRadius">0dp</item>
         <item name="cardBackgroundColor">@color/surface_variant</item>
         <item name="android:padding">20dp</item>
     </style>

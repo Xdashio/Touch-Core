@@ -1,191 +1,160 @@
-# Assistive Touch Kotlin
+# TouchCore
 
-A modern Android Assistive Touch app built with Kotlin and Material components.
+<div align="center">
 
-It provides a draggable floating button and a quick action panel for accessibility/system actions such as Home, Back, Recents, lock screen, screenshot, notifications, brightness, volume, flashlight, and screen recording.
+**Ultra-lightweight, brutalist floating assistive touch overlay and navigation hub for Android.**
 
----
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-purple.svg)](https://kotlinlang.org/)
+[![Min SDK](https://img.shields.io/badge/Min_SDK-29-brightgreen.svg)](https://developer.android.com/about/versions/10)
+[![Target SDK](https://img.shields.io/badge/Target_SDK-35-orange.svg)](https://developer.android.com/about/versions/15)
+[![APK Size](https://img.shields.io/badge/APK_Size-2.5_MB-success.svg)](app/build/outputs/apk/release/)
+[![Trackers](https://img.shields.io/badge/Trackers-0-brightgreen.svg)](#privacy--security)
 
-## Highlights
-
-- Floating overlay button (drag, snap-to-edge, tap-to-open panel, long-press action)
-- Accessibility-powered global actions:
-  - Home
-  - Back
-  - Recents
-  - Lock screen
-  - Screenshot
-  - Open notifications shade
-- Quick panel system actions:
-  - Wi-Fi settings panel
-  - Bluetooth settings
-  - Flashlight toggle
-  - Volume slider
-  - Brightness slider (with `WRITE_SETTINGS` capability)
-- Native screen recording flow using MediaProjection
-  - Runtime consent screen
-  - Foreground recording service
-  - Persistent notification stop action
-  - Video saved to MediaStore (`Movies/AssistiveTouch` on Android 10+)
-- App favorites manager to pin launchable apps
-- Light/Dark panel theming and button customization (size/alpha/color)
+</div>
 
 ---
 
-## Tech Stack
+## 💡 About TouchCore
 
-- **Language:** Kotlin
-- **Build system:** Gradle (Android application plugin)
-- **UI:** Android Views + Material Components
-- **Min SDK:** 29
-- **Target SDK / Compile SDK:** 35
-- **Java / Kotlin target:** 17
+**TouchCore** is a free, open-source alternative to Apple's AssistiveTouch and bulky third-party Android overlay apps. Built from scratch with Kotlin and clean architecture, TouchCore pairs a concentric circular floating bubble with a minimalist, high-contrast, brutalist interface.
+
+Unlike generic overlay apps that bloat your device with advertisements, tracking SDKs, and 50MB+ download sizes, TouchCore weighs in at just **2.5 MB**, operates **100% offline**, and requests only the minimal permissions required to function.
 
 ---
 
-## Project Structure
+## ✨ Features
+
+* **Authentic Concentric Floating Core**:
+  * Precision-crafted concentric circular floating button.
+  * Natural dragging physics with smooth edge snapping and boundary detection.
+  * Idle auto-dimming to 40% opacity to prevent screen distraction and save battery.
+  * Customizable button size (40–80 dp) and active/idle opacity levels.
+
+* **Global System Navigation**:
+  * Instant access to **Home**, **Back**, **App Switcher (Recents)**, **Lock Screen**, **Screenshot**, and **Notification Shade** via Android's Accessibility framework.
+
+* **Interactive Hardware Controls**:
+  * Direct touchscreen **Volume Slider** with instant audio feedback.
+  * Direct **Brightness Slider** (with fine-grained adjustment).
+  * One-tap **Torch (Flashlight)** toggle using camera flash hardware.
+  * Fast toggles for **Wi-Fi** and **Bluetooth** settings.
+  * Screen orientation lock and native **Screen Recording** via MediaProjection.
+
+* **Pinned App Favorites**:
+  * Pin your most frequently used apps directly to the radial menu for instant launching from anywhere.
+
+* **Zero-Radius Brutalist Design**:
+  * Sharp `0dp` border radii on all cards, buttons, dialogs, and panels.
+  * Deep OLED obsidian black (`#101216`) background with high-contrast monochrome accents.
+  * Clean, unified iconography using lightweight Lucide stroke vectors.
+
+* **Ultra-Lightweight & Private**:
+  * **2.5 MB** release binary size with R8 code optimization and resource shrinking.
+  * **Zero Analytics, Zero Ads, Zero Telemetry**.
+  * **Zero Internet Permission** (`android.permission.INTERNET` is not requested).
+
+---
+
+## 📸 Overview
+
+| Dashboard & Controls | Radial Action Menu | Hardware Sliders |
+| :---: | :---: | :---: |
+| High-contrast brutalist dashboard with service activation & sliders | Central circular menu for instant navigation & actions | Direct on-screen volume & brightness adjustments |
+
+---
+
+## 🔒 Permissions & Security
+
+TouchCore is designed around the principle of minimal privilege:
+
+| Permission | Purpose |
+| :--- | :--- |
+| `SYSTEM_ALERT_WINDOW` | Required to draw the floating touch core over other applications. |
+| `BIND_ACCESSIBILITY_SERVICE` | Required to execute system navigation actions (Home, Back, Recents, Lock Screen, Screenshot). Service is unexported and runs strictly locally. |
+| `WRITE_SETTINGS` | *(Optional)* Required only for adjusting screen brightness directly from the slider. |
+| `CAMERA` | *(Optional)* Required only to toggle the camera flash as a flashlight/torch. |
+| `FOREGROUND_SERVICE` | Keeps the overlay service alive and responsive in the background. |
+| `FOREGROUND_SERVICE_MEDIA_PROJECTION` | Enables screen recording via Android's native MediaProjection API. |
+| `POST_NOTIFICATIONS` | Displays the persistent foreground service notification in the drawer. |
+
+> **Note on Android 13+ Restricted Settings**:
+> When sideloading on Android 13 or later, Android may initially restrict accessibility permissions for sideloaded APKs. To enable:
+> Go to **App Info** → Tap the **Three Dots (⋮)** in the top right → Select **Allow restricted settings** → Return to Settings and enable the Accessibility Service.
+
+---
+
+## 🏗️ Architecture
+
+TouchCore follows clean architecture and separation of concerns:
 
 ```text
 app/src/main/java/com/example/assistivetouch/
-  prefs/
-    FavoritesManager.kt
-  service/
-    FloatingButtonService.kt
-    MyAccessibilityService.kt
-    ScreenRecordingService.kt
-  ui/
-    WelcomeActivity.kt
-    MainActivity.kt
-    SettingsActivity.kt
-    FavoritesActivity.kt
-    ScreenRecordPermissionActivity.kt
+├── action/              # Decoupled action dispatcher & executor
+│   ├── ActionDispatcher.kt
+│   └── ActionExecutor.kt
+├── model/               # Immutable models & domain state
+│   ├── AssistiveAction.kt
+│   ├── AssistiveItem.kt
+│   └── MenuPage.kt
+├── repository/          # Dynamic menu composition & page graphs
+│   └── MenuRepository.kt
+├── prefs/               # Local SharedPreferences & favorites storage
+│   └── FavoritesManager.kt
+├── service/             # Window management & system hooks
+│   ├── FloatingButtonService.kt
+│   ├── MyAccessibilityService.kt
+│   └── ScreenRecordingService.kt
+└── ui/                  # Activities, custom views, and canvas widgets
+    ├── MainActivity.kt
+    ├── SettingsActivity.kt
+    ├── FavoritesActivity.kt
+    ├── WelcomeActivity.kt
+    └── view/
+        ├── AssistiveRadialMenuView.kt
+        ├── CapsuleSliderView.kt
+        └── PillSegmentedGroup.kt
 ```
 
 ---
 
-## Permissions & Why They Are Needed
-
-### Core permissions
-
-- `SYSTEM_ALERT_WINDOW`
-  - Required to draw the floating button on top of other apps.
-- `BIND_ACCESSIBILITY_SERVICE` (service-level permission)
-  - Required to perform global actions (Home/Back/Recents/Lock/Screenshot/Notifications).
-- `FOREGROUND_SERVICE`
-  - Required for long-running user-visible services.
-- `POST_NOTIFICATIONS`
-  - Used for persistent notifications (service/recording status).
-
-### Feature-specific permissions
-
-- `WRITE_SETTINGS`
-  - Needed to change screen brightness from the panel.
-- `CAMERA`
-  - Used for flashlight control via camera torch API.
-- `FOREGROUND_SERVICE_MEDIA_PROJECTION`
-  - Required for screen recording foreground service type on modern Android.
-
-### Package visibility
-
-This app does **not** request broad package visibility (`QUERY_ALL_PACKAGES`).
-It uses a targeted `<queries>` launcher-intent declaration to list launchable apps for favorites.
-
----
-
-## How It Works
-
-1. User grants overlay + accessibility permissions from `MainActivity`.
-2. `FloatingButtonService` starts as foreground service and renders draggable floating UI.
-3. Tapping the bubble opens panel actions.
-4. Accessibility actions are dispatched through `MyAccessibilityService`.
-5. Screen recording flow:
-   - Panel record button opens `ScreenRecordPermissionActivity`.
-   - User grants MediaProjection consent.
-   - `ScreenRecordingService` starts recording via `MediaRecorder` + `VirtualDisplay`.
-   - User stops from panel (toggle) or notification action.
-
----
-
-## Local Development
+## 🚀 Building from Source
 
 ### Prerequisites
+* **JDK 17**
+* **Android SDK** with Platform Tools for API 35 (Android 15)
+* **Gradle Wrapper** (included)
 
-- Android Studio (latest stable recommended)
-- Android SDK for API 35
-- JDK 17
-- Gradle wrapper (included)
-
-### Clone
+### Build Commands
 
 ```bash
-git clone https://github.com/x-dash-io/assistive-touch.git
-cd assistive-touch
-```
+# Clone the repository
+git clone https://github.com/Xdashio/Touch-Core.git
+cd Touch-Core
 
-### Build debug APK
-
-```bash
+# Build Debug APK
 ./gradlew assembleDebug
+
+# Build Optimized Release APK (2.5 MB)
+./gradlew assembleRelease
+
+# Run Unit Tests
+./gradlew test
 ```
 
-Debug APK output:
-
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-### Run unit tests
-
+### Installation via ADB
 ```bash
-./gradlew testDebugUnitTest
+adb install -r app/build/outputs/apk/release/app-release.apk
 ```
 
 ---
 
-## Release Notes (Important)
+## 🤝 Contributing
 
-Current `app/build.gradle` release signing block uses the debug keystore for convenience.
-Before publishing to Play Store, replace this with your production keystore and secure credentials.
-
-Recommended pre-release checklist:
-
-- Configure production signing
-- Verify privacy policy URL
-- Complete Data safety declaration
-- Validate accessibility disclosure language and in-app messaging
-- Test on physical devices across Android 10/12/14/15
-
-Additional checklist: see [`PLAYSTORE_READINESS.md`](PLAYSTORE_READINESS.md).
+Contributions are welcome! Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines, coding conventions, and pull request procedures.
 
 ---
 
-## Testing Guidance
+## 📄 License
 
-Automated tests exist under:
-
-- `app/src/test/`
-- `app/src/androidTest/`
-
-Manual regression scenarios to run before release:
-
-- Overlay and accessibility permission onboarding
-- Panel actions (Home/Back/Recents/Lock/Screenshot/Notifications)
-- Brightness write settings behavior with/without permission
-- Flashlight behavior on devices with/without torch
-- Screen recording start/stop and file output
-- Favorites search + selection persistence
-
----
-
-## Known Environment Caveat (for CI/sandbox users)
-
-If your environment blocks outbound artifact resolution (e.g. HTTP 403 from Maven/Google), Gradle tasks may fail before compilation.
-In that case, run the same commands from a machine/network with normal Maven repository access.
-
----
-
-## License
-
-No license file is currently defined in this repository.
-If you plan to open-source publicly, add a license (for example: MIT, Apache-2.0, GPL-3.0).
-
+TouchCore is open-source software licensed under the [Apache License, Version 2.0](LICENSE).

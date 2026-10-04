@@ -1,6 +1,9 @@
 package com.example.assistivetouch.ui
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,45 +15,163 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.assistivetouch.R
 import com.example.assistivetouch.service.FloatingButtonService
 import com.example.assistivetouch.service.MyAccessibilityService
+import com.example.assistivetouch.ui.view.CapsuleSliderView
+import com.example.assistivetouch.ui.view.PillSegmentedGroup
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.card.MaterialCardView
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var drawerLayout: DrawerLayout
     private lateinit var toolbar: MaterialToolbar
-    private lateinit var iconOverlayStatus: ImageView
-    private lateinit var iconAccessibilityStatus: ImageView
+
+    // Master Service Controls
+    private lateinit var pillGroupMasterService: PillSegmentedGroup
+    private lateinit var textServiceStatusSubtitle: TextView
+
+    // Permission Cards & Indicators
+    private lateinit var buttonOverlayPermission: View
+    private lateinit var buttonAccessibility: View
+    private lateinit var buttonWriteSettings: View
     private lateinit var iconOverlayStatusLarge: ImageView
     private lateinit var iconAccessibilityStatusLarge: ImageView
-    private lateinit var buttonOverlayPermission: MaterialCardView
-    private lateinit var buttonAccessibility: MaterialCardView
-    private lateinit var buttonWriteSettings: MaterialCardView
-    private lateinit var buttonStartService: MaterialCardView
-    private lateinit var buttonSettings: MaterialCardView
+    private lateinit var iconWriteSettingsStatusLarge: ImageView
+
+    // Dashboard Live Sandbox Sliders
+    private lateinit var dashboardVolumeSlider: CapsuleSliderView
+    private lateinit var dashboardBrightnessSlider: CapsuleSliderView
+
+    // Navigation Cards
+    private lateinit var cardNavSettings: View
+    private lateinit var cardNavFavorites: View
+
+    // Sidebar Destinations
+    private lateinit var sideNavDashboard: View
+    private lateinit var sideNavAppearance: View
+    private lateinit var sideNavFavorites: View
+    private lateinit var sideNavControls: View
+    private lateinit var sideNavRestart: View
+
+    private var isServiceActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
+        initViews()
+        setupSidebarNavigation()
+        setupMasterPillToggle()
+        setupPermissionClicks()
+        setupHardwareSandbox()
+        setupQuickLinks()
+    }
 
-        iconOverlayStatus = findViewById(R.id.iconOverlayStatus)
-        iconAccessibilityStatus = findViewById(R.id.iconAccessibilityStatus)
-        iconOverlayStatusLarge = findViewById(R.id.iconOverlayStatusLarge)
-        iconAccessibilityStatusLarge = findViewById(R.id.iconAccessibilityStatusLarge)
+    private fun initViews() {
+        drawerLayout = findViewById(R.id.drawerLayout)
+        toolbar = findViewById(R.id.toolbar)
+
+        pillGroupMasterService = findViewById(R.id.pillGroupMasterService)
+        textServiceStatusSubtitle = findViewById(R.id.textServiceStatusSubtitle)
+
         buttonOverlayPermission = findViewById(R.id.buttonOverlayPermission)
         buttonAccessibility = findViewById(R.id.buttonAccessibility)
         buttonWriteSettings = findViewById(R.id.buttonWriteSettings)
-        buttonStartService = findViewById(R.id.buttonStartService)
-        buttonSettings = findViewById(R.id.buttonSettings)
 
+        iconOverlayStatusLarge = findViewById(R.id.iconOverlayStatusLarge)
+        iconAccessibilityStatusLarge = findViewById(R.id.iconAccessibilityStatusLarge)
+        iconWriteSettingsStatusLarge = findViewById(R.id.iconWriteSettingsStatusLarge)
+
+        dashboardVolumeSlider = findViewById(R.id.dashboardVolumeSlider)
+        dashboardBrightnessSlider = findViewById(R.id.dashboardBrightnessSlider)
+
+        cardNavSettings = findViewById(R.id.cardNavSettings)
+        cardNavFavorites = findViewById(R.id.cardNavFavorites)
+
+        sideNavDashboard = findViewById(R.id.sideNavDashboard)
+        sideNavAppearance = findViewById(R.id.sideNavAppearance)
+        sideNavFavorites = findViewById(R.id.sideNavFavorites)
+        sideNavControls = findViewById(R.id.sideNavControls)
+        sideNavRestart = findViewById(R.id.sideNavRestart)
+    }
+
+    private fun setupSidebarNavigation() {
+        // Toolbar hamburger button opens sidebar drawer
+        toolbar.setNavigationOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+
+        sideNavDashboard.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        sideNavAppearance.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            openSettingsActivity()
+        }
+
+        sideNavFavorites.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            openFavoritesActivity()
+        }
+
+        sideNavControls.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            val scrollView = findViewById<androidx.core.widget.NestedScrollView>(R.id.nestedScrollView)
+            val sectionControls = findViewById<View>(R.id.sectionControlsTitle)
+            scrollView.smoothScrollTo(0, sectionControls.top)
+        }
+
+        sideNavRestart.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            restartFloatingService()
+        }
+    }
+
+    private fun setupMasterPillToggle() {
+        pillGroupMasterService.setSegments(
+            listOf(
+                PillSegmentedGroup.Segment("STANDBY", "Standby"),
+                PillSegmentedGroup.Segment("ACTIVE", "Active")
+            ),
+            initialIndex = 0
+        )
+
+        pillGroupMasterService.onSegmentSelected = { _, id ->
+            if (id == "ACTIVE") {
+                if (hasOverlayPermission()) {
+                    startFloatingService()
+                    isServiceActive = true
+                    textServiceStatusSubtitle.text = "Floating Overlay Active"
+                    textServiceStatusSubtitle.setTextColor(ContextCompat.getColor(this, R.color.white))
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Please allow 'Display over other apps' to start overlay",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    requestOverlayPermission()
+                    pillGroupMasterService.selectSegmentById("STANDBY", notify = false)
+                    isServiceActive = false
+                }
+            } else {
+                stopFloatingService()
+                isServiceActive = false
+                textServiceStatusSubtitle.text = "Overlay Standby"
+                textServiceStatusSubtitle.setTextColor(android.graphics.Color.parseColor("#8E8E93"))
+            }
+        }
+    }
+
+    private fun setupPermissionClicks() {
         buttonOverlayPermission.setOnClickListener {
             it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             requestOverlayPermission()
@@ -65,109 +186,133 @@ class MainActivity : AppCompatActivity() {
             it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
             openWriteSettings()
         }
+    }
 
-        buttonStartService.setOnClickListener {
-            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-            if (hasOverlayPermission() && MyAccessibilityService.isEnabled(this)) {
-                startFloatingService()
-            } else {
-                // Encourage user to grant permissions first
-                updateStatus()
+    private fun setupHardwareSandbox() {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val maxVol = try {
+            audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        } catch (_: Exception) { 15 }
+        val currentVol = try {
+            audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        } catch (_: Exception) { 7 }
+
+        dashboardVolumeSlider.apply {
+            minValue = 0
+            maxValue = maxVol.coerceAtLeast(1)
+            stepSize = 1
+            showPercentage = false
+            customFormat = { "VOL $it / $maxValue" }
+            setIconResource(if (currentVol == 0) R.drawable.ic_lucide_volume_x else R.drawable.ic_lucide_volume_2)
+            setValue(currentVol)
+
+            onValueChanged = { vol, fromUser ->
+                if (fromUser) {
+                    try {
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, vol, 0)
+                    } catch (_: Exception) {}
+                    setIconResource(if (vol == 0) R.drawable.ic_lucide_volume_x else R.drawable.ic_lucide_volume_2)
+                }
             }
         }
 
-        buttonSettings.setOnClickListener {
-            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out)
+        val maxBrightness = 255
+        val currentBrightness = try {
+            Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS)
+        } catch (_: Exception) {
+            128
+        }
+
+        dashboardBrightnessSlider.apply {
+            minValue = 0
+            maxValue = maxBrightness
+            stepSize = 5
+            showPercentage = true
+            setIconResource(R.drawable.ic_lucide_sun)
+            setValue(currentBrightness)
+
+            onValueChanged = { b, fromUser ->
+                if (fromUser) {
+                    if (Settings.System.canWrite(this@MainActivity)) {
+                        try {
+                            Settings.System.putInt(
+                                contentResolver,
+                                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+                            )
+                            Settings.System.putInt(
+                                contentResolver,
+                                Settings.System.SCREEN_BRIGHTNESS,
+                                b
+                            )
+                        } catch (_: Exception) {}
+                    } else {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "Allow modify system settings to change brightness",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
-    private fun openWriteSettings() {
-        if (Settings.System.canWrite(this)) {
-            // Already granted - show notification
-            Toast.makeText(
-                this,
-                "Write settings permission is already granted",
-                Toast.LENGTH_SHORT
-            ).show()
+    private fun setupQuickLinks() {
+        cardNavSettings.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            openSettingsActivity()
         }
-        // Always open settings screen so user can verify/change
-        try {
-            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
-                data = Uri.parse("package:$packageName")
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        } catch (e: Exception) {
-            // Fallback to general settings if specific intent fails
-            Toast.makeText(
-                this,
-                "Please enable 'Modify system settings' permission in Settings",
-                Toast.LENGTH_LONG
-            ).show()
-            val intent = Intent(Settings.ACTION_SETTINGS).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
+
+        cardNavFavorites.setOnClickListener {
+            it.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            openFavoritesActivity()
         }
+    }
+
+    private fun openSettingsActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out)
+    }
+
+    private fun openFavoritesActivity() {
+        val intent = Intent(this, FavoritesActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out)
     }
 
     override fun onResume() {
         super.onResume()
-        updateStatus()
+        updatePermissionsStatus()
     }
 
-    private fun updateStatus() {
+    private fun updatePermissionsStatus() {
         val hasOverlay = hasOverlayPermission()
         val hasAccessibility = MyAccessibilityService.isEnabled(this)
+        val hasWriteSettings = Settings.System.canWrite(this)
 
-        // Update status icons in permission card
-        iconOverlayStatus.setImageResource(
-            if (hasOverlay) R.drawable.ic_check_circle else R.drawable.ic_error_circle
-        )
-        iconOverlayStatus.setColorFilter(
-            ContextCompat.getColor(this, if (hasOverlay) R.color.success else R.color.error)
-        )
-        
-        iconAccessibilityStatus.setImageResource(
-            if (hasAccessibility) R.drawable.ic_check_circle else R.drawable.ic_error_circle
-        )
-        iconAccessibilityStatus.setColorFilter(
-            ContextCompat.getColor(this, if (hasAccessibility) R.color.success else R.color.error)
-        )
+        val successColor = android.graphics.Color.parseColor("#34C759") // iOS vibrant green
+        val dimColor = android.graphics.Color.parseColor("#48484A")
 
-        // Update status icons in action cards
-        iconOverlayStatusLarge.setImageResource(
-            if (hasOverlay) R.drawable.ic_check_circle else R.drawable.ic_error_circle
-        )
-        iconOverlayStatusLarge.setColorFilter(
-            ContextCompat.getColor(this, if (hasOverlay) R.color.success else R.color.error)
-        )
-        iconOverlayStatusLarge.visibility = if (hasOverlay) View.VISIBLE else View.GONE
-        
-        iconAccessibilityStatusLarge.setImageResource(
-            if (hasAccessibility) R.drawable.ic_check_circle else R.drawable.ic_error_circle
-        )
-        iconAccessibilityStatusLarge.setColorFilter(
-            ContextCompat.getColor(this, if (hasAccessibility) R.color.success else R.color.error)
-        )
-        iconAccessibilityStatusLarge.visibility = if (hasAccessibility) View.VISIBLE else View.GONE
+        iconOverlayStatusLarge.setColorFilter(if (hasOverlay) successColor else dimColor)
+        iconAccessibilityStatusLarge.setColorFilter(if (hasAccessibility) successColor else dimColor)
+        iconWriteSettingsStatusLarge.setColorFilter(if (hasWriteSettings) successColor else dimColor)
 
-        // Enable/disable start service button
-        buttonStartService.isEnabled = hasOverlay && hasAccessibility
-        buttonStartService.alpha = if (buttonStartService.isEnabled) 1f else 0.6f
-        
-        // Animate status changes
-        iconOverlayStatus.animate().scaleX(1.2f).scaleY(1.2f).setDuration(150)
-            .withEndAction {
-                iconOverlayStatus.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
-            }.start()
-        iconAccessibilityStatus.animate().scaleX(1.2f).scaleY(1.2f).setDuration(150)
-            .withEndAction {
-                iconAccessibilityStatus.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
-            }.start()
+        if (hasOverlay) {
+            if (!isServiceActive) {
+                startFloatingService()
+                isServiceActive = true
+            }
+            pillGroupMasterService.selectSegmentById("ACTIVE", notify = false)
+            textServiceStatusSubtitle.text = "Floating Overlay Active"
+            textServiceStatusSubtitle.setTextColor(ContextCompat.getColor(this, R.color.white))
+        } else {
+            pillGroupMasterService.selectSegmentById("STANDBY", notify = false)
+            isServiceActive = false
+            textServiceStatusSubtitle.text = "Overlay Permission Required"
+            textServiceStatusSubtitle.setTextColor(android.graphics.Color.parseColor("#FF453A"))
+        }
     }
 
     private fun hasOverlayPermission(): Boolean {
@@ -181,14 +326,9 @@ class MainActivity : AppCompatActivity() {
     private fun requestOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.canDrawOverlays(this)) {
-                // Already granted - show notification
-                Toast.makeText(
-                    this,
-                    "Draw over other apps permission is already granted",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Draw over apps permission already granted", Toast.LENGTH_SHORT).show()
+                return
             }
-            // Always open settings screen so user can verify/change
             try {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
                     data = Uri.parse("package:$packageName")
@@ -196,81 +336,56 @@ class MainActivity : AppCompatActivity() {
                 }
                 startActivity(intent)
             } catch (e: Exception) {
-                // Fallback to general settings if specific intent fails
-                Toast.makeText(
-                    this,
-                    "Please enable 'Display over other apps' permission in Settings",
-                    Toast.LENGTH_LONG
-                ).show()
                 val intent = Intent(Settings.ACTION_SETTINGS).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 }
                 startActivity(intent)
             }
-        } else {
-            // Android < M doesn't need this permission
-            Toast.makeText(
-                this,
-                "Draw over other apps permission is not required on this Android version",
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
     private fun openAccessibilitySettings() {
         if (MyAccessibilityService.isEnabled(this)) {
-            // Already enabled - show notification
-            Toast.makeText(
-                this,
-                "Accessibility service is already enabled",
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
-            // Show helpful message about restricted settings
-            android.app.AlertDialog.Builder(this)
-                .setTitle("Enable Accessibility Service")
-                .setMessage("If you see a 'Restricted setting' dialog:\n\n" +
-                        "1. Tap 'OK' on the restricted setting dialog\n" +
-                        "2. Go to Settings > Apps > Assistive Touch Kotlin\n" +
-                        "3. Tap 'More options' (three dots)\n" +
-                        "4. Enable 'Allow restricted settings'\n" +
-                        "5. Return here and try again\n\n" +
-                        "This is required for security on Android 13+.")
-                .setPositiveButton("Open Accessibility Settings") { _, _ ->
-                    try {
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                        startActivity(intent)
-                    } catch (e: Exception) {
-                        Toast.makeText(
-                            this,
-                            "Please enable Accessibility Service in Settings",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        val intent = Intent(Settings.ACTION_SETTINGS).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        }
-                        startActivity(intent)
-                    }
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+            Toast.makeText(this, "Accessibility service already enabled", Toast.LENGTH_SHORT).show()
             return
         }
-        
-        // If already enabled, just open settings
+
+        AlertDialog.Builder(this)
+            .setTitle("Enable Accessibility Service")
+            .setMessage("To perform Home, Back, Recents, and Screen Capture:\n\n" +
+                    "1. Tap 'Open Settings'\n" +
+                    "2. Select 'TouchCore'\n" +
+                    "3. Turn switch ON.\n\n" +
+                    "(If restricted on Android 13: App Info > Three Dots > Allow restricted settings)")
+            .setPositiveButton("Open Settings") { _, _ ->
+                try {
+                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    val intent = Intent(Settings.ACTION_SETTINGS).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    startActivity(intent)
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun openWriteSettings() {
+        if (Settings.System.canWrite(this)) {
+            Toast.makeText(this, "Modify system settings already granted", Toast.LENGTH_SHORT).show()
+            return
+        }
         try {
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                data = Uri.parse("package:$packageName")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             startActivity(intent)
         } catch (e: Exception) {
-            Toast.makeText(
-                this,
-                "Please enable Accessibility Service in Settings",
-                Toast.LENGTH_LONG
-            ).show()
             val intent = Intent(Settings.ACTION_SETTINGS).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
@@ -279,14 +394,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startFloatingService() {
-        val intent = Intent(this, FloatingButtonService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            @Suppress("DEPRECATION")
-            startService(intent as Intent)
+        try {
+            val intent = Intent(this, FloatingButtonService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                @Suppress("DEPRECATION")
+                startService(intent)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Could not start overlay: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun stopFloatingService() {
+        try {
+            val intent = Intent(this, FloatingButtonService::class.java)
+            stopService(intent)
+        } catch (_: Exception) {}
+    }
+
+    private fun restartFloatingService() {
+        stopFloatingService()
+        window.decorView.postDelayed({
+            if (hasOverlayPermission()) {
+                startFloatingService()
+                Toast.makeText(this, "Overlay refreshed", Toast.LENGTH_SHORT).show()
+            }
+        }, 300L)
+    }
 }
-
-

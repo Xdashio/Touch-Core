@@ -49,6 +49,18 @@ class MyAccessibilityService : AccessibilityService() {
         performGlobalAction(GLOBAL_ACTION_NOTIFICATIONS)
     }
 
+    fun openQuickSettings() {
+        performGlobalAction(GLOBAL_ACTION_QUICK_SETTINGS)
+    }
+
+    fun performPowerDialogAction() {
+        performGlobalAction(GLOBAL_ACTION_POWER_DIALOG)
+    }
+
+    fun dismissNotificationShade() {
+        performGlobalAction(GLOBAL_ACTION_DISMISS_NOTIFICATION_SHADE)
+    }
+
     companion object {
         @Volatile
         private var instance: MyAccessibilityService? = null

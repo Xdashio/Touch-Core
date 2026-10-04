@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Assistive Touch Kotlin</string>
+    <string name="app_name">TouchCore</string>
     <string name="accessibility_service_description">
-        Assistive Touch provides a floating button for quick navigation (Home, Back, Recents) and device controls (brightness, volume, notifications). This is a safe, open-source accessibility tool.
+        TouchCore provides a floating button for quick navigation (Home, Back, Recents) and device controls (brightness, volume, notifications). This is a safe, open-source accessibility tool.
     </string>
     <string name="permission_draw_over">Grant Draw Over Other Apps</string>
     <string name="permission_accessibility">Open Accessibility Settings</string>
@@ -9,7 +9,7 @@
     <string name="permission_status_accessibility">Accessibility service: %1$s</string>
     <string name="status_granted">granted</string>
     <string name="status_not_granted">not granted</string>
-    <string name="start_floating_service">Start Assistive Touch</string>
+    <string name="start_floating_service">Start TouchCore</string>
     <string name="settings_button_size">Floating button size (dp)</string>
     <string name="settings_button_alpha">Floating button transparency</string>
     <string name="settings_button_color">Floating button color</string>
@@ -19,6 +19,35 @@
     <string name="open_settings">Open Settings</string>
     <string name="main_hint_overlay">Required so the floating button can appear over apps.</string>
     <string name="main_hint_accessibility">Required to perform Home, Back and other system actions.</string>
+
+    <!-- Assistive Touch Menu Titles -->
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_notification_center">Notification\nCenter</string>
+    <string name="menu_device">Device</string>
+    <string name="menu_control_center">Control\nCenter</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_siri">Siri</string>
+    <string name="menu_assistant">Assistant</string>
+    <string name="menu_custom">Custom</string>
+    <string name="menu_back">Back</string>
+    <string name="menu_lock_screen">Lock Screen</string>
+    <string name="menu_rotate_screen">Rotate Screen</string>
+    <string name="menu_volume_up">Volume Up</string>
+    <string name="menu_volume_down">Volume Down</string>
+    <string name="menu_mute">Mute</string>
+    <string name="menu_screenshot">Screenshot</string>
+    <string name="menu_recents">App Switcher</string>
+    <string name="menu_power">Restart</string>
+    <string name="menu_more">More</string>
+    <string name="menu_add_favorite">Add</string>
+    <string name="menu_flashlight">Torch</string>
+    <string name="menu_controls">Controls</string>
+    <string name="menu_record">Record</string>
+    <string name="menu_wifi">Wi-Fi</string>
+    <string name="menu_bluetooth">Bluetooth</string>
+    <string name="menu_favorites">Favorites</string>
+    <string name="menu_volume">Volume</string>
+    <string name="menu_brightness">Brightness</string>
 </resources>
 
 
